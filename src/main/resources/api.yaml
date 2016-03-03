@@ -128,7 +128,7 @@ paths:
 
   /project/{projectName}/task/{taskName}:
     put:
-      description: update task
+      description: update task (use it to assign a user, (un)check task as complete and update an existing task)
       parameters:
         - name: projectName
           in: path

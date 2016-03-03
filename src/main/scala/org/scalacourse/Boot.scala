@@ -29,6 +29,7 @@ object Boot extends App with ServiceBoot with ApplicationRoutesConsolidated {
     }
   }
 
+  //get project percentage
   override def handleGetProjectsProjectName(projectName: String)(): Route = ?
 
   override def handlePostProjects(projectInfo: Project)(): Route = {
