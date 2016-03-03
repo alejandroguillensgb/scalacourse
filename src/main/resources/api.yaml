@@ -1,18 +1,246 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
 swagger: '2.0'
 info:
+  title: Uber API
+  description: Move your app forward with the Uber API
   version: "1.0.0"
+# the domain of the service
+host: api.uber.com
+# array of all schemes that your API supports
+schemes:
+  - https
+# will be prefixed to all paths
+basePath: /v1
+produces:
+  - application/json
+consumes:
+  - application/json
+  
 paths:
-  /hello:
-    get:
+  /projects:
+    post:
+      description: Create project
+      parameters:
+        - name: projectInfo
+          in: body
+          description: Project info.
+          required: true
+          schema: 
+            $ref: "#/definitions/Project"
       responses:
         200:
+          description: Successful operation
           schema:
-            $ref: "#/definitions/HelloResponse"
+            $ref: "#/definitions/Project"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+    
+  /projects/{projectName}:
+    put:
+      description: Update project
+      parameters:
+      - name: projectInfo
+        in: body
+        required: true
+        description: update info
+        schema:
+          $ref: "#/definitions/Project"
+      - name: projectName
+        type: string
+        in: path
+        description: "updateProject info"
+        required: true
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Project"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+
+    delete:
+      description: Delete project
+      parameters:
+      - name: projectName
+        type: string
+        in: path
+        required: true
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Project"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+
+
+    get:
+      description: Get project completeness
+      parameters:
+      - name: projectName
+        type: string
+        in: path
+        required: true
+      responses:
+        200:
+          description: Percentage
+          schema:
+            type: object
+            properties:
+              percentage:
+                type: integer
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+
+  /project/{projectName}/task:
+    post:
+      description: Create task
+      parameters:
+        - name: projectName
+          in: path
+          description: project name
+          required: true
+          type: string
+        - name: taskInfo
+          in: body
+          description: task info.
+          required: true
+          schema:
+            $ref: "#/definitions/Task"
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Task"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+
+  /project/{projectName}/task/{taskName}:
+    put:
+      description: update task
+      parameters:
+        - name: projectName
+          in: path
+          description: project name
+          required: true
+          type: string
+        - name: taskName
+          in: path
+          description: task name.
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Task"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+
+    delete:
+      description: delete task
+      parameters:
+        - name: projectName
+          in: path
+          description: project name
+          required: true
+          type: string
+        - name: taskName
+          in: path
+          description: task name.
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Task"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+
+  /project/{projectName}/user/{userName}:
+    get:
+      description: Get user tasks
+      parameters:
+        - name: projectName
+          in: path
+          description: project name
+          required: true
+          type: string
+        - name: userName
+          in: path
+          description: user name.
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Task"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+            
 definitions:
-  HelloResponse:
+  Project:
     type: object
     required:
-    - hello
+    - projectName
+    - leaderName
+    - initDate
+    - finDate
+    - tasks
     properties:
-      hello:
+      projectName:
+        type: string 
+      leaderName:
+        type: string
+      initDate:
+        type: string
+      finDate:
+        type: string
+      tasks:
+        type: array
+        items:
+          $ref: "#/definitions/Task"
+  Task:
+    type: object
+    required:
+    - taskName
+    - complete
+    properties:
+      taskName:
+        type: string
+      user:
+        type: string
+      complete:
+        type: boolean
+        
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
         type: string
